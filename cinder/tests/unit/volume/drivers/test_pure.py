@@ -49,6 +49,10 @@ patch_retry = mock.patch('cinder.utils.retry', fake_retry)
 patch_retry.start()
 sys.modules['pypureclient'] = mock.Mock()
 from cinder.volume.drivers import pure  # noqa
+#changed
+from cinder.volume.drivers.pure.base_driver import PureBaseVolumeDriver
+from cinder.volume.drivers.pure.base_driver import flasharray
+
 
 # Only mock utils.retry for cinder.volume.drivers.pure import
 patch_retry.stop()
@@ -499,7 +503,7 @@ FC_WWNS = ["21000024ff59fe9" + str(i + 1) for i in range(len(FC_PORT_NAMES))]
 AC_FC_WWNS = [
     "21000024ff59fab" + str(i + 1) for i in range(len(FC_PORT_NAMES))]
 HOSTNAME = "computenode1"
-PURE_HOST_NAME = pure.PureBaseVolumeDriver._generate_purity_host_name(HOSTNAME)
+PURE_HOST_NAME = PureBaseVolumeDriver._generate_purity_host_name(HOSTNAME)
 PURE_HOST = {
     "name": PURE_HOST_NAME,
     "host_group": None,
@@ -1204,7 +1208,7 @@ class PureDriverTestCase(test.TestCase):
         self.async_array2.array_id = GET_ARRAY_SECONDARY["id"]
         self.async_array2.get.return_value = GET_ARRAY_SECONDARY
         self.async_array2.replication_type = 'async'
-        self.flasharray = pure.flasharray
+        self.flasharray = flasharray
         # self.purestorage_module = pure.flasharray
         # self.purestorage_module.PureHTTPError = FakePureStorageHTTPError
 
@@ -1249,7 +1253,7 @@ class PureDriverTestCase(test.TestCase):
 class PureBaseSharedDriverTestCase(PureDriverTestCase):
     def setUp(self):
         super(PureBaseSharedDriverTestCase, self).setUp()
-        self.driver = pure.PureBaseVolumeDriver(configuration=self.mock_config)
+        self.driver = PureBaseVolumeDriver(configuration=self.mock_config)
         self.driver._array = self.array
         self.mock_object(self.driver, '_get_current_array',
                          return_value=self.array)
@@ -1328,7 +1332,7 @@ class PureBaseSharedDriverTestCase(PureDriverTestCase):
 class PureBaseVolumeDriverGetCurrentArrayTestCase(PureDriverTestCase):
     def setUp(self):
         super(PureBaseVolumeDriverGetCurrentArrayTestCase, self).setUp()
-        self.driver = pure.PureBaseVolumeDriver(configuration=self.mock_config)
+        self.driver = PureBaseVolumeDriver(configuration=self.mock_config)
         self.driver._array = self.array
         self.driver._replication_pod_name = 'cinder-pod'
         self.driver._replication_pg_name = 'cinder-group'
@@ -2646,7 +2650,7 @@ class PureBaseVolumeDriverTestCase(PureBaseSharedDriverTestCase):
     @mock.patch(DRIVER_PATH + ".LOG")
     @mock.patch(DRIVER_PATH + ".flasharray.ProtectionGroupSnapshotPatch")
     @mock.patch(BASE_DRIVER_OBJ + "._get_pgroup_snap_name",
-                spec=pure.PureBaseVolumeDriver._get_pgroup_snap_name)
+                spec=PureBaseVolumeDriver._get_pgroup_snap_name)
     def test_delete_cgsnapshot(self, error_text, mock_get_snap_name,
                                mock_pgsnap_patch, mock_logger):
         snap_name = "consisgroup-4a2f7e3a-312a-40c5-96a8-536b8a0f" \
@@ -2692,7 +2696,7 @@ class PureBaseVolumeDriverTestCase(PureBaseSharedDriverTestCase):
 
     @mock.patch(DRIVER_PATH + ".flasharray.ProtectionGroupSnapshotPatch")
     @mock.patch(BASE_DRIVER_OBJ + "._get_pgroup_snap_name",
-                spec=pure.PureBaseVolumeDriver._get_pgroup_snap_name)
+               spec=PureBaseVolumeDriver._get_pgroup_snap_name)
     def test_delete_cgsnapshot_eradicate_now(self, mock_get_snap_name,
                                              mock_pgsnap_patch):
         snap_name = "consisgroup-4a2f7e3a-312a-40c5-96a8-536b8a0f" \

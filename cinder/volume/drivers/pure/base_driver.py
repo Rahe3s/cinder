@@ -21,8 +21,8 @@ from cinder.volume import volume_types
 from cinder.objects import fields
 from .exceptions import PureDriverException,PureRetryableException
 
-from config import PURE_OPTS
-from constants import USER_AGENT_BASE
+from .config import PURE_OPTS
+from .constants import USER_AGENT_BASE
 from.utils import pure_driver_debug_trace
 from oslo_utils import units
 from .constants import *
@@ -1141,6 +1141,13 @@ class PureBaseVolumeDriver(san.SanDriver):
         """Return the name of the snapshot that Purity will use."""
         return "%s.%s" % (self._get_vol_name(snapshot.volume),
                           snapshot["name"])
+    
+    
+    def _get_pgroup_snap_name(self, group_snapshot):
+        """Return the name of the pgroup snapshot that Purity will use"""
+        return "%s.%s" % (self._get_pgroup_name(group_snapshot.group),
+                          self._get_pgroup_snap_suffix(group_snapshot))
+
     
     @staticmethod
     def _get_pgroup_vol_snap_name(pg_name, pgsnap_suffix, volume_name):

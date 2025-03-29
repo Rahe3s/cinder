@@ -2,7 +2,7 @@
 from cinder.volume.drivers.pure import fc_driver 
 from unittest import mock
 from copy import deepcopy
-from test_pure import PureBaseSharedDriverTestCase
+from cinder.tests.unit.volume.drivers.test_pure import PureBaseSharedDriverTestCase
 from cinder.volume.drivers.pure import fc_driver 
 from cinder.volume.drivers.pure import base_driver
 import sys
